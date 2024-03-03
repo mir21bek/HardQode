@@ -52,4 +52,4 @@ class GroupAddSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupMembership
-        fields = ("user", "group")
+        fields = ("group",)

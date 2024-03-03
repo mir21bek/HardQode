@@ -1,6 +1,13 @@
 from random import shuffle
 from django.db import transaction
+from django.db.models import Count
+
 from courses.models import Product, Group, GroupMembership
+
+
+def choose_group_for_user(product):
+    group = Group.objects.annotate(num_users=Count("group")).order_by("num_users").first()
+    return group
 
 
 def distribute_users_to_group(product_id, users):
