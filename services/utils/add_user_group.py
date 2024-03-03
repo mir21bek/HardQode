@@ -6,7 +6,9 @@ from courses.models import Product, Group, GroupMembership
 
 
 def choose_group_for_user(product):
-    group = Group.objects.annotate(num_users=Count("group")).order_by("num_users").first()
+    group = (
+        Group.objects.annotate(num_users=Count("group")).order_by("num_users").first()
+    )
     return group
 
 
@@ -18,9 +20,7 @@ def distribute_users_to_group(product_id, users):
 
     groups = Group.objects.filter(product=product)
 
-    sh_lst = [product.author] + list(
-        users
-    )
+    sh_lst = [product.author] + list(users)
     shuffle(sh_lst)
 
     user_per_group = len(users) // len(groups)

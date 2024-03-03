@@ -14,7 +14,10 @@ from .models import Product, Group, GroupMembership
 from users.models import CustomUser
 from rest_framework import permissions
 from rest_framework.views import APIView
-from services.utils.add_user_group import distribute_users_to_group, choose_group_for_user
+from services.utils.add_user_group import (
+    distribute_users_to_group,
+    choose_group_for_user,
+)
 
 
 class ProductListAPIView(generics.ListAPIView):
@@ -57,8 +60,11 @@ class CreateGroupAPIView(generics.CreateAPIView):
 class GroupAddAPIView(APIView):
     @swagger_auto_schema(
         request_body=GroupAddSerializer,
-        responses={201: "User added to group", 404: "No available groups",
-                   200: "message Groups rebuilt"},
+        responses={
+            201: "User added to group",
+            404: "No available groups",
+            200: "message Groups rebuilt",
+        },
     )
     def post(self, request, product_id, user_id):
         product = Product.objects.get(pk=product_id)
@@ -67,9 +73,13 @@ class GroupAddAPIView(APIView):
             group = choose_group_for_user(product)
             if group:
                 GroupMembership.objects.create(group=group, user=user)
-                return Response({"message": "User added to group."}, status=status.HTTP_200_OK)
+                return Response(
+                    {"message": "User added to group."}, status=status.HTTP_200_OK
+                )
             else:
-                return Response({"error": "No available groups."}, status=status.HTTP_404_NOT_FOUND)
+                return Response(
+                    {"error": "No available groups."}, status=status.HTTP_404_NOT_FOUND
+                )
         else:
             distribute_users_to_group(product.id, user)
             return Response({"message": "Groups rebuilt."}, status=status.HTTP_200_OK)
